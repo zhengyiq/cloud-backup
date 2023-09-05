@@ -2,6 +2,8 @@
 #include "config.hpp"
 #include "data.hpp"
 #include "hot.hpp"
+#include "service.hpp"
+#include <thread>
 void FileUtilTest(const std::string &filename)
 {
     // 测试获取文件相关属性
@@ -140,17 +142,29 @@ void DataTest(const std::string &filename)
 cloud::DataManager *_data;
 void HotTest()
 {
-    _data = new cloud::DataManager();
     cloud::HotManager hot;
     hot.RunModule();
 }
 
+void ServiceTest()
+{
+    cloud::Service srv;
+    srv.RunModule();
+}
+
 int main(int argc, char *argv[])
 {
+    _data = new cloud::DataManager();
     // FileUtilTest(argv[1]);
     // JsonUtilTest();
     // ConfigTest();
     // DataTest(argv[1]);
-    HotTest();
+    // HotTest();
+    // ServiceTest();
+
+    std::thread thread_hot_manager(HotTest);
+    std::thread thread_service(ServiceTest);
+    thread_hot_manager.join();
+    thread_service.join();
     return 0;
 }
